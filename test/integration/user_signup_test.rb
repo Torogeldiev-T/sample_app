@@ -16,7 +16,7 @@ class UserSignupTest < UsersSignup
     end
     assert_response :unprocessable_entity
     assert_template 'users/new'
-    assert_select 'div.alert.alert-danger', 'The form contains 1 error'
+    assert_select 'div.alert.alert-danger', 'The form contains 1 error.'
   end
 
   test 'valid signup information with account activation' do
