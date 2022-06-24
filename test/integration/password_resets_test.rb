@@ -26,7 +26,7 @@ class ForgotPasswordFormTest < PasswordResets
   test 'should rerender when invalid email submitted' do
     post password_resets_path, params: { password_reset: { email: '' } }
     assert_response :unprocessable_entity
-    assert_equal nil, flash[:info]
+    assert_nil flash[:info]
     assert_template 'password_resets/new'
   end
 end

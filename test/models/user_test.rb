@@ -73,4 +73,37 @@ class UserTest < ActiveSupport::TestCase
       @user.destroy
     end
   end
+
+  test 'should follow and unfollow a user' do
+    tilek = users(:tilek)
+    archer  = users(:archer)
+    assert_not tilek.following?(archer)
+    tilek.follow(archer)
+    assert tilek.following?(archer)
+    assert archer.followers.include?(tilek)
+    tilek.unfollow(archer)
+    assert_not tilek.following?(archer)
+    assert_nil tilek.active_relationships.find_by(followed_id: archer)
+    # Users can't follow themselves.
+    tilek.follow(tilek)
+    assert_not tilek.following?(tilek)
+  end
+
+  test 'feed should have the right posts' do
+    tilek = users(:tilek)
+    archer  = users(:archer)
+    lana    = users(:lana)
+    # Posts from followed user
+    lana.microposts.each do |post_following|
+      assert tilek.feed.include?(post_following)
+    end
+    # Self-posts for user with followers
+    tilek.microposts.each do |post_self|
+      assert tilek.feed.include?(post_self)
+    end
+    # Posts from non-followed user
+    archer.microposts.each do |post_unfollowed|
+      assert_not tilek.feed.include?(post_unfollowed)
+    end
+  end
 end
